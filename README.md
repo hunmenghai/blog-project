@@ -77,18 +77,25 @@ The application currently connects using the PostgreSQL user `postgres`, host `l
 
 **Security:** Never commit your `.env` file or publish database credentials.
 
+
 ### 5. Start the application
 
-If your `package.json` defines a `start` script, run:
+Run the application using Nodemon:
 
 ```bash
-npm start
+nodemon app.js
 ```
 
-Otherwise, you can start the application with:
+Nodemon automatically restarts the server when you save changes to your files.
+
+Open the application in your browser:
+
+http://localhost:3000
+
+**Note:** If Nodemon is not installed globally, you can run it using:
 
 ```bash
-node app.js
+npx nodemon app.js
 ```
 
 Open the following URL in your browser:
