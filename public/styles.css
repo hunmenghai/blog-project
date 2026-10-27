@@ -1,0 +1,414 @@
+/* ==========================================================================
+   My Blog stylesheet
+   Sections: 1 Tokens · 2 Base · 3 Header · 4 Home · 5 Post cards
+             6 Post body (article text) · 7 Forms · 8 Footer · 9 Responsive
+   ========================================================================== */
+
+
+/* 1. Tokens
+   -------------------------------------------------------------------------- */
+:root {
+    --ink: #202522;
+    --muted: #68716b;
+    --paper: #f7f5ef;
+    --surface: #fffdf8;
+    --line: #deded4;
+    --accent: #b64d35;
+    --accent-dark: #8f3827;
+
+    --font-body: "DM Sans", sans-serif;
+    --font-display: "Newsreader", Georgia, serif;
+
+    --reading-width: 68ch;
+}
+
+
+/* 2. Base
+   -------------------------------------------------------------------------- */
+body {
+    min-width: 320px;
+    color: var(--ink);
+    font-family: var(--font-body);
+    background: var(--paper);
+    background-image: radial-gradient(#d6d8c9 0.7px, transparent 0.7px);
+    background-size: 18px 18px;
+}
+
+.navbar-brand,
+h1,
+h2,
+h3 {
+    color: var(--ink);
+    font-family: var(--font-display);
+}
+
+a {
+    color: var(--accent);
+}
+
+a:hover {
+    color: var(--accent-dark);
+}
+
+/* Visible keyboard focus everywhere */
+a:focus-visible,
+button:focus-visible,
+.btn:focus-visible {
+    outline: 3px solid rgba(182, 77, 53, 0.45);
+    outline-offset: 2px;
+}
+
+.btn-primary {
+    --bs-btn-bg: var(--accent);
+    --bs-btn-border-color: var(--accent);
+    --bs-btn-hover-bg: var(--accent-dark);
+    --bs-btn-hover-border-color: var(--accent-dark);
+    --bs-btn-active-bg: var(--accent-dark);
+    --bs-btn-active-border-color: var(--accent-dark);
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--accent);
+    --bs-btn-border-color: var(--accent);
+    --bs-btn-hover-bg: var(--accent);
+    --bs-btn-hover-border-color: var(--accent);
+    --bs-btn-active-bg: var(--accent-dark);
+    --bs-btn-active-border-color: var(--accent-dark);
+}
+
+.btn-outline-danger {
+    --bs-btn-hover-bg: #b02a37;
+}
+
+
+/* 3. Header
+   -------------------------------------------------------------------------- */
+.site-header {
+    border-bottom: 1px solid rgba(32, 37, 34, 0.12);
+    background: rgba(247, 245, 239, 0.9);
+}
+
+.navbar {
+    min-height: 76px;
+}
+
+.navbar-brand {
+    font-size: 1.65rem;
+    font-weight: 700;
+}
+
+
+/* 4. Home page intro and library
+   -------------------------------------------------------------------------- */
+.intro {
+    border-bottom: 1px solid var(--line);
+}
+
+.intro h1 {
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    letter-spacing: -0.04em;
+}
+
+.eyebrow {
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.post-library {
+    background: rgba(255, 253, 248, 0.72);
+}
+
+.post-count {
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+
+/* 5. Post cards
+   -------------------------------------------------------------------------- */
+.post-card,
+.empty-state {
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--surface);
+    box-shadow: 0 12px 30px rgba(32, 37, 34, 0.05);
+}
+
+.post-card {
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.post-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 34px rgba(32, 37, 34, 0.1);
+}
+
+.post-card .card-body {
+    padding: 1.5rem;
+}
+
+.post-card .card-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 4vw, 2.1rem);
+    line-height: 1.15;
+    margin-bottom: 1.25rem;
+}
+
+.post-actions {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+}
+
+.post-actions .btn {
+    margin-right: 0.4rem;
+}
+
+/* Optional: add class "is-excerpt" to .card-text on the home page
+   to show only a short preview of each post. */
+.post-card .card-text.is-excerpt {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.empty-state {
+    padding: 3rem 1rem;
+}
+
+
+/* 6. Post body (the article text)
+   Works whether your template wraps the body in .post-content
+   or in .post-card .card-text.
+   -------------------------------------------------------------------------- */
+.post-content,
+.post-card .card-text {
+    max-width: var(--reading-width);
+    margin-inline: auto;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.75;
+    white-space: normal;          /* was pre-wrap: it turned every newline into a blank line */
+    overflow-wrap: anywhere;      /* long strings can't break the card layout */
+}
+
+/* Paragraphs */
+.post-content p,
+.post-card .card-text p {
+    margin: 0 0 1.25rem;
+}
+
+/* Section headings: more space above than below, so each heading
+   clearly belongs to the text that follows it */
+.post-content h2,
+.post-content h3,
+.post-card .card-text h2,
+.post-card .card-text h3 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 2.25rem 0 0.6rem;
+}
+
+.post-content h2,
+.post-card .card-text h2 {
+    font-size: 1.5rem;
+}
+
+.post-content h3,
+.post-card .card-text h3 {
+    font-size: 1.25rem;
+}
+
+/* No extra gap at the very top or very bottom of the body */
+.post-content > :first-child,
+.post-card .card-text > :first-child {
+    margin-top: 0;
+}
+
+.post-content > :last-child,
+.post-card .card-text > :last-child {
+    margin-bottom: 0;
+}
+
+/* Inline emphasis */
+.post-content strong,
+.post-card .card-text strong {
+    font-weight: 700;
+}
+
+/* Lists */
+.post-content ul,
+.post-content ol,
+.post-card .card-text ul,
+.post-card .card-text ol {
+    margin: 0 0 1.25rem;
+    padding-left: 1.5rem;
+}
+
+.post-content li,
+.post-card .card-text li {
+    margin-bottom: 0.4rem;
+}
+
+/* Quotes */
+.post-content blockquote,
+.post-card .card-text blockquote {
+    margin: 1.75rem 0;
+    padding: 0.25rem 0 0.25rem 1.25rem;
+    border-left: 3px solid var(--accent);
+    color: var(--muted);
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+}
+
+/* Code */
+.post-content code,
+.post-card .card-text code {
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+    background: #efece1;
+    font-size: 0.9em;
+}
+
+.post-content pre,
+.post-card .card-text pre {
+    margin: 0 0 1.25rem;
+    padding: 1rem;
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: #efece1;
+}
+
+.post-content pre code,
+.post-card .card-text pre code {
+    padding: 0;
+    background: none;
+}
+
+/* Images */
+.post-content img,
+.post-card .card-text img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 1.5rem 0;
+    border-radius: 6px;
+}
+
+/* Divider */
+.post-content hr,
+.post-card .card-text hr {
+    margin: 2rem 0;
+    border-color: var(--line);
+    opacity: 1;
+}
+
+
+/* 7. Forms (new post / edit post)
+   -------------------------------------------------------------------------- */
+.form-page {
+    min-height: calc(100vh - 77px);
+}
+
+.form-shell {
+    max-width: 720px;
+    padding: clamp(1.5rem, 5vw, 3.5rem);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: rgba(255, 253, 248, 0.94);
+    box-shadow: 0 18px 42px rgba(32, 37, 34, 0.08);
+}
+
+.form-label {
+    color: var(--ink);
+    font-weight: 700;
+}
+
+.form-control {
+    border-color: var(--line);
+    border-radius: 4px;
+    background-color: #fffefa;
+}
+
+.form-control:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 0.2rem rgba(182, 77, 53, 0.15);
+}
+
+/* Body field: roomy, comfortable to write long posts in */
+textarea.form-control {
+    min-height: 16rem;
+    line-height: 1.7;
+    resize: vertical;
+}
+
+
+/* 8. Footer
+   -------------------------------------------------------------------------- */
+footer {
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+}
+
+
+/* 9. Responsive and motion
+   -------------------------------------------------------------------------- */
+@media (max-width: 575.98px) {
+    .intro h1 {
+        font-size: 3.5rem;
+    }
+
+    .navbar {
+        min-height: 68px;
+    }
+
+    .post-card .card-body {
+        padding: 1.15rem;
+    }
+
+    .post-content h2,
+    .post-card .card-text h2 {
+        font-size: 1.35rem;
+    }
+
+    .post-content h3,
+    .post-card .card-text h3 {
+        font-size: 1.15rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .post-card {
+        transition: none;
+    }
+
+    .post-card:hover {
+        transform: none;
+    }
+}
+
+.post-title-link {
+  color: #8B4A36;
+  text-decoration: none;
+}
+
+.post-title-link:hover {
+  color: #6F3829;
+  text-decoration: underline;
+}
+
+.read-more-link {
+  color: #8B4A36;
+  text-decoration: none;
+}
+
+.read-more-link:hover {
+  color: #6F3829;
+  text-decoration: underline;
+}

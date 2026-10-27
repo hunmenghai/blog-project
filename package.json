@@ -1,0 +1,11 @@
+{
+  "type": "module",
+  "dependencies": {
+    "dotenv": "^18.0.9",
+    "ejs": "^6.0.1",
+    "express": "^5.2.1",
+    "marked": "^18.1.1",
+    "pg": "^8.23.0",
+    "sanitize-html": "^2.18.1"
+  }
+}
