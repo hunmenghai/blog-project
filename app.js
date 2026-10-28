@@ -1,3 +1,4 @@
+
 import express from "express";
 import pg from "pg";
 import "dotenv/config";
@@ -7,97 +8,76 @@ import sanitizeHtml from "sanitize-html";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const db = new pg.Client({
-  user: "postgres",
-  host: "localhost",
-  database: "blog",
-  password: process.env.DB_PASSWORD,
-  port: 5432,
-});
-db.connect();
+// Use Neon when DATABASE_URL is configured; otherwise use local PostgreSQL.
+const db = process.env.DATABASE_URL
+  ? new pg.Client({
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false },
+    })
+  : new pg.Client({
+      user: "postgres",
+      host: "localhost",
+      database: "blog",
+      password: process.env.DB_PASSWORD,
+      port: 5432,
+    });
 
-// Express looks for "views" by default — since your folder is "view", tell it explicitly:
 app.set("views", "view");
 app.set("view engine", "ejs");
 
 app.use(express.static("public"));
-app.use(express.urlencoded({ extended: true })); // needed to read form data (req.body)
-
-// In-memory store — resets every time the server restarts
-//let posts = [];
+app.use(express.urlencoded({ extended: true }));
 
 // Home: list all posts
 app.get("/", async (req, res) => {
-  const result = await db.query(
-    "SELECT * FROM posts ORDER BY id DESC"
-  );
+  try {
+    const result = await db.query(
+      "SELECT * FROM public.posts ORDER BY id DESC"
+    );
 
-  const posts = result.rows.map((post) => ({
-    ...post,
-    contentHtml: sanitizeHtml(
-      marked.parse(post.content)
-    ),
-  }));
+    const posts = result.rows.map((post) => ({
+      ...post,
+      contentHtml: sanitizeHtml(marked.parse(post.content)),
+    }));
 
-  res.render("index", { posts });
+    res.render("index", { posts });
+  } catch (error) {
+    console.error("Error fetching posts:", error.message);
+    res.status(500).send("Could not load blog posts. Check the server terminal.");
+  }
 });
 
-// Form to create a new post
+// Form to create a post
 app.get("/new", (req, res) => {
   res.render("create");
 });
 
 // Handle new post submission
 app.post("/posts", async (req, res) => {
-  const { title, content } = req.body;
-  if (!title || !content) {
-    return res.redirect("/new");
+  try {
+    const { title, content } = req.body;
+
+    if (!title?.trim() || !content?.trim()) {
+      return res.redirect("/new");
+    }
+
+    await db.query(
+      "INSERT INTO public.posts (title, content) VALUES ($1, $2)",
+      [title, content]
+    );
+
+    res.redirect("/");
+  } catch (error) {
+    console.error("Error creating post:", error.message);
+    res.status(500).send("Could not create the post.");
   }
-  await db.query("INSERT INTO posts (title, content) VALUES ($1, $2)", [title, content]);
-  res.redirect("/");
 });
 
-// Form to edit an existing post
-app.get("/posts/:id/edit", async (req, res) => {
-  
- // Display one complete blog post
-app.get("/posts/:id", async (req, res) => {
-  const result = await db.query(
-    "SELECT * FROM posts WHERE id = $1",
-    [req.params.id]
-  );
-
-  const post = result.rows[0];
-
-  if (!post) {
-    return res.status(404).send("Post not found");
-  }
-
-  post.contentHtml = sanitizeHtml(
-    await marked.parse(post.content)
-  );
-
-  res.render("post", { post });
-});
-
-  // your db.query
-  const result = await db.query(
-    "SELECT * FROM posts WHERE id = $1", 
-    [req.params.id]
-  );
-
-  // your result.rows[0]
-  const post = result.rows[0];
-
-  // your res.render
-  res.render("edit", { post });
-});
-
-
+// Display one complete blog post
 app.get("/posts/:id", async (req, res) => {
   try {
     const result = await db.query(
-      "SELECT * FROM posts WHERE id = $1",
+      "SELECT * FROM public.posts WHERE id = $1",
       [req.params.id]
     );
 
@@ -107,34 +87,94 @@ app.get("/posts/:id", async (req, res) => {
       return res.status(404).send("Post not found");
     }
 
-    post.contentHtml = sanitizeHtml(
-      await marked.parse(post.content)
-    );
+    post.contentHtml = sanitizeHtml(marked.parse(post.content));
 
     res.render("post", { post });
   } catch (error) {
-    console.error("Error fetching post:", error);
-    res.status(500).send("Something went wrong while loading the post.");
+    console.error("Error fetching post:", error.message);
+    res.status(500).send("Could not load the article.");
+  }
+});
+
+// Form to edit an existing post
+app.get("/posts/:id/edit", async (req, res) => {
+  try {
+    const result = await db.query(
+      "SELECT * FROM public.posts WHERE id = $1",
+      [req.params.id]
+    );
+
+    const post = result.rows[0];
+
+    if (!post) {
+      return res.status(404).send("Post not found");
+    }
+
+    res.render("edit", { post });
+  } catch (error) {
+    console.error("Error loading edit form:", error.message);
+    res.status(500).send("Could not load the edit form.");
   }
 });
 
 // Handle edit submission
 app.post("/posts/:id/edit", async (req, res) => {
-  const { title, content } = req.body;
-  await db.query(
-  "UPDATE posts SET title = $1, content = $2 WHERE id = $3",
-  [title, content, req.params.id]
-);
-  res.redirect("/");
+  try {
+    const { title, content } = req.body;
+
+    if (!title?.trim() || !content?.trim()) {
+      return res.redirect(`/posts/${req.params.id}/edit`);
+    }
+
+    await db.query(
+      "UPDATE public.posts SET title = $1, content = $2 WHERE id = $3",
+      [title, content, req.params.id]
+    );
+
+    res.redirect("/");
+  } catch (error) {
+    console.error("Error updating post:", error.message);
+    res.status(500).send("Could not update the post.");
+  }
 });
 
 // Delete a post
 app.post("/posts/:id/delete", async (req, res) => {
-  await db.query("DELETE FROM posts WHERE id = $1", [req.params.id]);
-  res.redirect("/");
+  try {
+    await db.query(
+      "DELETE FROM public.posts WHERE id = $1",
+      [req.params.id]
+    );
+
+    res.redirect("/");
+  } catch (error) {
+    console.error("Error deleting post:", error.message);
+    res.status(500).send("Could not delete the post.");
+  }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+// Connect first, verify the actual database, then start the server.
+async function startServer() {
+  try {
+    await db.connect();
 
+    const result = await db.query(`
+      SELECT
+        current_database() AS database,
+        current_schema() AS schema,
+        to_regclass('public.posts') IS NOT NULL AS posts_table_exists,
+        (SELECT COUNT(*) FROM public.posts) AS total_posts
+    `);
+
+    console.log("Database connection verified:", result.rows[0]);
+
+    app.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error("Database connection or startup failed:", error.message);
+    process.exitCode = 1;
+  }
+}
+
+startServer();
