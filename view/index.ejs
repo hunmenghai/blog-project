@@ -86,8 +86,29 @@
             <% posts.forEach(post => { %>
 
               <article class="col">
-                <div class="card post-card h-100">
-                  <div class="card-body d-flex flex-column">
+                
+              <div class="card post-card h-100">
+                <% 
+                  const imageByTitle = {
+                    "Are We Destined to Stay Poor If We Are Born Poor?": "/images/poverty.jpg",
+                    "Why We Avoid the Things We Most Need to Do": "/images/procrastination.jpg",
+                    "Why We Compare Ourselves to Others": "/images/comparison.jpg",
+                    "Why Learning Slowly Is Not the Same as Failing": "/images/learning.jpg"
+                  };
+                  const postImage = imageByTitle[post.title];
+                %>
+
+                <% if (postImage) { %>
+                  <img
+                    src="<%= postImage %>"
+                    class="card-img-top post-thumbnail"
+                    alt="<%= post.title %>"
+                    loading="lazy"
+                  >
+                <% } %>
+
+                <div class="card-body d-flex flex-column">
+
 
                     <h3 class="card-title h4">
                       <a

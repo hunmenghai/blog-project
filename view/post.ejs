@@ -33,26 +33,47 @@
     </nav>
   </header>
 
+  <%
+    const imageByTitle = {
+      "Are We Destined to Stay Poor If We Are Born Poor?": "/images/poverty.jpg",
+      "Why We Avoid the Things We Most Need to Do": "/images/procrastination.jpg",
+      "Why We Compare Ourselves to Others": "/images/comparison.jpg",
+      "Why Learning Slowly Is Not the Same as Failing": "/images/learning.jpg"
+    };
+
+    const postImage = imageByTitle[post.title];
+  %>
+
   <main class="container py-5">
-    <article class="form-shell mx-auto w-100">
+    <article class="article-page mx-auto">
 
-      <h1 class="mb-4"><%= post.title %></h1>
-
-      <div class="post-content">
-        <%- post.contentHtml %>
-      </div>
-
-      <div class="mt-4 pt-3 border-top d-flex flex-wrap gap-2">
-        <a href="/" class="btn btn-outline-primary">
-          ← Back to all posts
-        </a>
-
-        <a
-          href="/posts/<%= post.id %>/edit"
-          class="btn btn-outline-primary"
+      <% if (postImage) { %>
+        <img
+          src="<%= postImage %>"
+          alt="<%= post.title %>"
+          class="article-featured-image"
         >
-          Edit
-        </a>
+      <% } %>
+
+      <div class="article-body">
+        <h1 class="article-title"><%= post.title %></h1>
+
+        <div class="post-content article-content">
+          <%- post.contentHtml %>
+        </div>
+
+        <div class="article-actions mt-5 pt-4 border-top">
+          <a href="/" class="btn btn-outline-primary">
+            ← Back to all posts
+          </a>
+
+          <a
+            href="/posts/<%= post.id %>/edit"
+            class="btn btn-outline-primary"
+          >
+            Edit article
+          </a>
+        </div>
       </div>
 
     </article>
