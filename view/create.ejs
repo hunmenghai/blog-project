@@ -1,9 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>New Post</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,600;6..72,700&display=swap" rel="stylesheet">
@@ -25,22 +27,129 @@
             <div class="form-shell mx-auto">
                 <p class="eyebrow mb-2">New entry</p>
                 <h1 class="display-5 fw-bold mb-2">Create a new post</h1>
-                <p class="text-body-secondary mb-4">Put an idea into words and share it with the world.</p>
+                <p class="text-body-secondary mb-4">
+                    Put an idea into words and share it with the world.
+                </p>
 
-                <form method="POST" action="/posts">
+                <form method="POST" action="/posts" enctype="multipart/form-data">
+
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <div class="mb-4">
                         <label class="form-label" for="title">Title</label>
-                        <input class="form-control form-control-lg" id="title" type="text" name="title" required>
+                        <input
+                            class="form-control form-control-lg"
+                            id="title"
+                            type="text"
+                            name="title"
+                            maxlength="100"
+                            required
+                        >
                     </div>
+
                     <div class="mb-4">
                         <label class="form-label" for="content">Content</label>
-                        <textarea class="form-control" id="content" name="content" rows="9" required></textarea>
+                        <textarea
+                            class="form-control"
+                            id="content"
+                            name="content"
+                            rows="9"
+                            required
+                        ></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary">Publish post</button>
+
+                    <div class="mb-4">
+                        <label class="form-label" for="image">
+                            Featured image <span class="text-body-secondary">(optional)</span>
+                        </label>
+
+                        <input
+                            class="form-control"
+                            id="image"
+                            type="file"
+                            name="image"
+                            accept="image/jpeg,image/png,image/webp"
+                        >
+
+                        <div class="form-text">
+                            Choose a JPG, PNG, or WebP image. Maximum size will be limited by the server.
+                        </div>
+
+                        <div id="preview-container" class="mt-3" hidden>
+                            <img
+                                id="image-preview"
+                                alt="Preview of your featured image"
+                                style="display:block; width:100%; max-height:320px; object-fit:cover; border-radius:12px;"
+                            >
+
+                            <button
+                                type="button"
+                                id="remove-image"
+                                class="btn btn-outline-primary btn-sm mt-2"
+                            >
+                                Remove image
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        Publish post
+                    </button>
                 </form>
             </div>
         </div>
     </main>
+
+    <script>
+        const imageInput = document.getElementById("image");
+        const previewContainer = document.getElementById("preview-container");
+        const imagePreview = document.getElementById("image-preview");
+        const removeImageButton = document.getElementById("remove-image");
+
+        let previewUrl = null;
+
+        imageInput.addEventListener("change", () => {
+            const file = imageInput.files[0];
+
+            if (previewUrl) {
+                URL.revokeObjectURL(previewUrl);
+                previewUrl = null;
+            }
+
+            if (!file) {
+                previewContainer.hidden = true;
+                imagePreview.removeAttribute("src");
+                return;
+            }
+
+            const allowedTypes = [
+                "image/jpeg",
+                "image/png",
+                "image/webp"
+            ];
+
+            if (!allowedTypes.includes(file.type)) {
+                alert("Please select a JPG, PNG, or WebP image.");
+                imageInput.value = "";
+                previewContainer.hidden = true;
+                return;
+            }
+
+            previewUrl = URL.createObjectURL(file);
+            imagePreview.src = previewUrl;
+            previewContainer.hidden = false;
+        });
+
+        removeImageButton.addEventListener("click", () => {
+            imageInput.value = "";
+
+            if (previewUrl) {
+                URL.revokeObjectURL(previewUrl);
+                previewUrl = null;
+            }
+
+            imagePreview.removeAttribute("src");
+            previewContainer.hidden = true;
+        });
+    </script>
 </body>
 </html>
-
