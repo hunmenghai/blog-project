@@ -1,183 +1,181 @@
-# My Blog — Full-Stack Blog Application
+# Blog Web Application
 
-A full-stack blog application built with Node.js, Express, EJS, and PostgreSQL. It provides a clean, responsive interface for creating, reading, editing, and deleting articles, with Markdown support and featured images.
+A dynamic personal blog web application built with **Node.js, Express.js, EJS, and PostgreSQL**.
 
-## Features
+Visitors can browse and read published articles, while the administrator can securely create, edit, and delete posts through an authenticated interface.
 
-- **Create posts** — Write and publish blog articles.
-- **Read articles** — Browse article previews on the homepage and open individual article pages.
-- **Edit posts** — Update existing article titles and content.
-- **Delete posts** — Remove unwanted articles.
-- **Markdown rendering** — Format article content using Markdown.
-- **HTML sanitization** — Sanitize rendered Markdown before displaying it.
-- **Article images** — Display thumbnails on the homepage and featured images on individual article pages.
-- **Responsive design** — A clean, editorial-style layout for desktop and smaller screens.
-- **PostgreSQL integration** — Store and retrieve blog posts from a relational database.
+**Live Demo:** https://blog-project-l6vx.onrender.com
 
-## Tech Stack
-
-| Technology | Purpose |
-|---|---|
-| Node.js | JavaScript runtime |
-| Express.js | Web application framework |
-| EJS | Server-side HTML templating |
-| PostgreSQL | Relational database |
-| `pg` | PostgreSQL client for Node.js |
-| Bootstrap 5 | Responsive layout and UI components |
-| CSS | Custom styling |
-| Marked | Markdown parsing |
-| sanitize-html | HTML sanitization |
-| dotenv | Environment variable configuration |
+**GitHub Repository:** https://github.com/hunmenghai/blog-project
 
 ## Screenshots
 
-Add screenshots of your actual application to a `screenshots/` folder, then uncomment or add the corresponding image references below.
+| Homepage | Article Page |
+|---|---|
+| ![Homepage](screenshots/homepage.png) | ![Article Page](screenshots/article.png) |
 
+| Admin Login | Create Post |
+|---|---|
+| ![Admin Login](screenshots/login.png) | ![Create Post](screenshots/create-post.png) |
 
-### Homepage
-![Blog homepage](screenshots/homepage.png)
+## Features
 
-### Individual Article Page
-![Individual article page](screenshots/article-page.png)
+### Public Features
+- Browse published blog posts.
+- Read individual articles.
+- Responsive user interface.
 
-### Create a Post
-![Create post form](screenshots/create-post.png)
+### Admin Features
+- Administrator login and logout.
+- Create, edit, and delete blog posts.
+- Upload and replace post images.
+- Password hashing using bcrypt.
+- Session-based authentication.
+
+### Security
+- CSRF protection.
+- Login rate limiting.
+- Secure session cookie configuration.
+- Parameterized SQL queries.
+- Image type validation and file-size restrictions.
+- Environment variables for sensitive configuration.
+
+## Technologies Used
+
+| Category | Technologies |
+|---|---|
+| Backend | Node.js, Express.js |
+| Frontend | HTML, CSS, JavaScript, EJS, Bootstrap |
+| Database | PostgreSQL |
+| Authentication | bcrypt, express-session |
+| Image Upload | Multer |
+| Image Storage | Cloudinary |
+| Security | csrf-sync, express-rate-limit |
+| Deployment | Render, Neon PostgreSQL |
+| Version Control | Git, GitHub |
 
 ## Getting Started
 
 ### Prerequisites
 
-Make sure you have installed:
+- Node.js
+- npm
+- PostgreSQL or a Neon PostgreSQL database
+- A Cloudinary account for image uploads
 
-- [Node.js](https://nodejs.org/)
-- [PostgreSQL](https://www.postgresql.org/)
-- [Git](https://git-scm.com/)
+### Installation
 
-### 1. Clone the repository
+1. Clone the repository:
 
-```bash
-git clone https://github.com/hunmenghai/blog-project.git
-cd blog-project
-```
+   ```bash
+   git clone https://github.com/hunmenghai/blog-project.git
+   ```
 
-### 2. Install dependencies
+2. Navigate to the project directory:
 
-```bash
-npm install
-```
+   ```bash
+   cd blog-project
+   ```
 
-### 3. Create the database
+3. Install dependencies:
 
-Open PostgreSQL using pgAdmin or your preferred PostgreSQL client.
+   ```bash
+   npm install
+   ```
 
-Create a database named `blog`:
+4. Create a `.env` file in the project root:
 
-```sql
-CREATE DATABASE blog;
-```
+   ```env
+   PORT=3000
+   DATABASE_URL=your_database_connection_string
+   DB_PASSWORD=your_local_database_password
+   CLOUDINARY_CLOUD_NAME=your_cloud_name
+   CLOUDINARY_API_KEY=your_api_key
+   CLOUDINARY_API_SECRET=your_api_secret
+   SESSION_SECRET=your_session_secret
+   ```
 
-Then execute the SQL statements in `schema.sql` against the `blog` database to create the required table.
+   Configure `DATABASE_URL` when using Neon PostgreSQL. For local PostgreSQL, configure `DB_PASSWORD` instead.
 
-### 4. Configure environment variables
+5. Set up the database:
 
-Create a `.env` file in the project root:
+   Execute the SQL statements in `schema.sql` to create the `posts` and `admins` tables.
 
-```env
-DB_PASSWORD=your_postgresql_password
-```
+6. Create an administrator account:
 
-Replace `your_postgresql_password` with your local PostgreSQL password.
+   ```bash
+   node create-admin.js
+   ```
 
-The application currently connects using:
+   Enter your administrator username and password when prompted.
 
-- **Host:** `localhost`
-- **Port:** `5432`
-- **Database:** `blog`
-- **User:** `postgres`
+7. Start the application:
 
-If your PostgreSQL configuration differs, update the database settings in `app.js` as needed.
+   ```bash
+   node app.js
+   ```
 
-**Security:** Never commit your `.env` file or publish database credentials.
+8. Open your browser:
 
-### 5. Start the application
+   http://localhost:3000
 
-Start the development server using Nodemon:
+## Environment Variables
 
-```bash
-npx nodemon app.js
-```
+| Variable | Purpose |
+|---|---|
+| `PORT` | Application port (defaults to 3000) |
+| `DATABASE_URL` | Neon PostgreSQL connection string |
+| `DB_PASSWORD` | Local PostgreSQL password |
+| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name |
+| `CLOUDINARY_API_KEY` | Cloudinary API key |
+| `CLOUDINARY_API_SECRET` | Cloudinary API secret |
+| `SESSION_SECRET` | Express session secret |
 
-Nodemon automatically restarts the server when you make changes to your application files.
+Never commit your `.env` file or expose database credentials, API keys, or session secrets.
 
-If Nodemon is installed globally, you can also run:
+## Database Structure
 
-```bash
-nodemon app.js
-```
+The application uses PostgreSQL with three tables:
 
-Open your browser and visit:
+| Table | Purpose |
+|---|---|
+| `posts` | Stores blog articles and optional Cloudinary image URLs |
+| `admins` | Stores administrator usernames and bcrypt password hashes |
+| `user_sessions` | Stores persistent administrator session data |
 
-http://localhost:3000
+The `posts` and `admins` tables are defined in `schema.sql`.
 
+The `user_sessions` table is created automatically by `connect-pg-simple` when the application starts, if it does not already exist.
 
 ## Project Structure
 
 ```text
 blog-project/
 ├── public/
-│   ├── images
-│   │   ├── comparison.jpg
-│   │   ├── learning.jpg
-│   │   ├── poverty.jpg
-│   │   └── procrastination.jpg
+│   ├── images/
 │   └── styles.css
-├── screenshots/
-│   ├── artical-page.png
-│   └── create-post.png
-│   └── homepage.png
 ├── view/
 │   ├── create.ejs
 │   ├── edit.ejs
 │   ├── index.ejs
+│   ├── login.ejs
 │   └── post.ejs
-├── .gitignore
 ├── app.js
+├── create-admin.js
+├── schema.sql
 ├── package.json
 ├── package-lock.json
-├── schema.sql
-└── README.md
+└── .gitignore
 ```
-
-
-## What I Learned
-
-Through this project, I practiced:
-
-- Building server-side web applications with Express.js.
-- Connecting a Node.js application to PostgreSQL.
-- Implementing CRUD operations.
-- Rendering dynamic pages using EJS.
-- Handling HTML forms and HTTP routes.
-- Parsing Markdown and sanitizing HTML.
-- Managing environment variables securely.
-- Organizing static assets and styling responsive pages.
-- Using Git and GitHub for version control.
 
 ## Future Improvements
 
-- Add user authentication and authorization.
-- Add pagination for larger collections of posts.
-- Implement post search and filtering.
-- Improve form validation and error handling.
-- Allow users to upload or select article images dynamically.
-- Deploy the application online.
+- Search functionality.
+- Post categories and tags.
+- Pagination.
+- Improved administrator dashboard.
+- Additional input validation and error handling.
 
 ## Author
 
-**Hun Menghai**
-
-- GitHub: [@hunmenghai](https://github.com/hunmenghai)
-
----
-
-Built as a full-stack web development project.
+Developed as part of the **Complete Web Development Bootcamp** capstone projects.
