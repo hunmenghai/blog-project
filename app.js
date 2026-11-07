@@ -21,6 +21,11 @@ const app = express();
 const PostgresStore = connectPgSimple(session);
 const PORT = process.env.PORT || 3000;
 
+console.log(
+  "SESSION_SECRET configured:",
+  Boolean(process.env.SESSION_SECRET?.trim())
+);
+
 const {
   generateToken,
   csrfSynchronisedProtection,
