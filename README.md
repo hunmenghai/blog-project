@@ -12,7 +12,8 @@ Visitors can browse and read published articles, while the administrator can sec
 
 | Homepage | Article Page |
 |---|---|
-| ![Homepage](screenshots/homepage.png) | ![Article Page](screenshots/article.png) |
+| ![Homepage](screenshots/homepage.png) | ![Article Page](screenshots/article-page.png) |
+
 
 | Admin Login | Create Post |
 |---|---|
